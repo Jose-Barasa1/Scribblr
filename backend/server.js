@@ -5,6 +5,11 @@ import dotenv from "dotenv";
 import session from "express-session";
 import passport from "./config/passport.js";
 import authRoutes from "./routes/auth.routes.js";
+import siteRoutes from "./routes/site.routes.js";
+import equipmentRoutes from "./routes/equipment.routes.js";
+import handoutRoutes from "./routes/handout.routes.js";
+import vaultRoutes from "./routes/vault.routes.js";
+import workforceRoutes from "./routes/workforce.routes.js";
 
 dotenv.config();
 
@@ -31,7 +36,14 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/sites", siteRoutes);
+app.use("/api/equipment", equipmentRoutes);
+app.use("/api/handouts", handoutRoutes);
+app.use("/api/vault", vaultRoutes);
+app.use("/api/workforce", workforceRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
