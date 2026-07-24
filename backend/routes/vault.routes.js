@@ -1,5 +1,6 @@
 import express from 'express';
 import VaultItem from '../models/VaultItem.js';
+import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -8,10 +9,18 @@ const ensureAuth = (req, res, next) => {
   return res.status(401).json({ error: 'Unauthorized access' });
 };
 
-// 1. Add / Upload an item to the Vault
-router.post('/add', ensureAuth, async (req, res) => {
+// 1. Add / Upload an item to the Vault (Handles optional document/file upload)
+router.post('/add', ensureAuth, upload.single('file'), async (req, res) => {
   try {
-    const { site, title, category, fileUrl, fileType, isRestricted, notes } = req.body;
+    const { site, title, category, isRestricted, notes } = req.body;
+
+    // Use Cloudinary file URL & mime type if uploaded, fallback to body values or defaults
+    const fileUrl = req.file ? req.file.path : (req.body.fileUrl || '');
+    const fileType = req.file ? req.file.mimetype : (req.body.fileType || 'application/octet-stream');
+
+    if (!fileUrl) {
+      return res.status(400).json({ error: 'Please provide a file attachment or file URL.' });
+    }
 
     const newItem = new VaultItem({
       site,
@@ -20,9 +29,9 @@ router.post('/add', ensureAuth, async (req, res) => {
       fileUrl,
       fileType,
       uploadedBy: req.user._id,
-      isRestricted: isRestricted || false,
+      isRestricted: isRestricted === 'true' || isRestricted === true,
       allowedUsers: [req.user._id],
-      notes,
+      notes: notes || '',
     });
 
     await newItem.save();
@@ -46,7 +55,7 @@ router.get('/site/:siteId', ensureAuth, async (req, res) => {
 
     res.status(200).json(items);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch vault items' });
+    res.status(500).json({ error: 'Failed to fetch vault items', details: error.message });
   }
 });
 
@@ -69,7 +78,7 @@ router.post('/request-access/:id', ensureAuth, async (req, res) => {
 
     res.status(200).json({ message: 'Access request sent to Contractor/Manager' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to request access' });
+    res.status(500).json({ error: 'Failed to request access', details: error.message });
   }
 });
 
@@ -98,7 +107,7 @@ router.patch('/handle-access-request/:id', ensureAuth, async (req, res) => {
     await item.save();
     res.status(200).json({ message: `Access request ${action.toLowerCase()}`, item });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update access request' });
+    res.status(500).json({ error: 'Failed to update access request', details: error.message });
   }
 });
 
