@@ -1,127 +1,117 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 
 export default function SitesDashboard() {
-  const siteStats = [
-    { label: 'Active Projects', value: '6', change: 'On schedule', border: 'border-amber-500' },
-    { label: 'Total Site Crews', value: '12', change: 'Across all locations', border: 'border-yellow-500' },
-    { label: 'Active Inspections', value: '4', change: 'Passed today', border: 'border-orange-500' },
-    { label: 'Overall Completion', value: '68%', change: 'Target: Q4 2026', border: 'border-amber-600' },
-  ];
+  const [sites, setSites] = useState([
+    { id: 'SIT-01', name: 'CBD Tower A', location: 'Nairobi CBD', foreman: 'David Ochieng', workers: 45, progress: 75, status: 'Active' },
+    { id: 'SIT-02', name: 'Westlands Commercial Hub', location: 'Westlands', foreman: 'Samuel Mwangi', workers: 38, progress: 40, status: 'Active' },
+    { id: 'SIT-03', name: 'Kilimani Project', location: 'Kilimani', foreman: 'Kevin Kiprop', workers: 22, progress: 90, status: 'Active' },
+  ]);
 
-  const sites = [
-    {
-      id: 'SIT-01',
-      name: 'CBD Tower A',
-      location: 'Nairobi CBD',
-      foreman: 'David Ochieng',
-      progress: 75,
-      status: 'Active',
-      workers: 45,
-    },
-    {
-      id: 'SIT-02',
-      name: 'Westlands Commercial Hub',
-      location: 'Westlands',
-      foreman: 'Samuel Mwangi',
-      progress: 40,
-      status: 'Active',
-      workers: 38,
-    },
-    {
-      id: 'SIT-03',
-      name: 'Kilimani Residential Estate',
-      location: 'Kilimani',
-      foreman: 'Kevin Kiprop',
-      progress: 90,
-      status: 'Near Completion',
-      workers: 24,
-    },
-    {
-      id: 'SIT-04',
-      name: 'Industrial Park Warehouse',
-      location: 'Mombasa Road',
-      foreman: 'Peter Kamau',
-      progress: 15,
-      status: 'Initial Phase',
-      workers: 35,
-    },
-  ];
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [location, setLocation] = useState('');
+  const [foreman, setForeman] = useState('');
+  const [workers, setWorkers] = useState(10);
+
+  const handleAddSite = (e) => {
+    e.preventDefault();
+    const newSite = {
+      id: `SIT-0${sites.length + 1}`,
+      name,
+      location,
+      foreman,
+      workers: Number(workers),
+      progress: 0,
+      status: 'Active'
+    };
+    setSites([newSite, ...sites]);
+    setName('');
+    setLocation('');
+    setForeman('');
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        {siteStats.map((stat, idx) => (
-          <div
-            key={idx}
-            className={`bg-white border-l-4 ${stat.border} p-5 rounded-xl border-t border-r border-b border-gray-200 shadow-sm`}
-          >
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{stat.label}</p>
-            <p className="text-3xl font-black text-gray-900 mt-2">{stat.value}</p>
-            <p className="text-xs text-amber-600 mt-1 font-semibold">{stat.change}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Active Construction Sites</h2>
           <p className="text-sm text-gray-500 mt-0.5">Manage site progress, foreman assignments, and active rosters.</p>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold rounded-lg border border-gray-300 transition-all">
-            Export Report
-          </button>
-          <button className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold rounded-lg shadow-sm transition-all">
-            + Add New Site
-          </button>
-        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-sm font-bold rounded-lg shadow-sm transition-all"
+        >
+          + Add New Site
+        </button>
       </div>
 
-      {/* Sites Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sites.map((site) => (
-          <div key={site.id} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all">
-            <div className="flex justify-between items-start mb-3">
+          <div key={site.id} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
+            <div className="flex justify-between items-start">
               <div>
                 <span className="text-xs font-mono font-bold text-amber-600">{site.id}</span>
-                <h3 className="text-lg font-bold text-gray-900 mt-0.5">{site.name}</h3>
-                <p className="text-sm text-gray-500">{site.location}</p>
+                <h3 className="text-lg font-bold text-gray-900">{site.name}</h3>
+                <p className="text-xs text-gray-500">{site.location}</p>
               </div>
-              <span className="inline-block px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+              <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
                 {site.status}
               </span>
             </div>
 
-            <div className="my-4 pt-3 border-t border-gray-100 text-sm text-gray-700 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Site Foreman:</span>
-                <span className="font-semibold text-gray-900">{site.foreman}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Assigned Workers:</span>
-                <span className="font-semibold text-gray-900">{site.workers} On Site</span>
-              </div>
+            <div className="space-y-1 text-xs text-gray-600">
+              <div className="flex justify-between"><span>Site Foreman:</span> <strong className="text-gray-900">{site.foreman}</strong></div>
+              <div className="flex justify-between"><span>Assigned Workers:</span> <strong className="text-gray-900">{site.workers} On Site</strong></div>
             </div>
 
-            {/* Progress Bar */}
-            <div className="mt-4">
-              <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="text-gray-500">Completion Progress</span>
-                <span className="text-gray-900">{site.progress}%</span>
+            <div>
+              <div className="flex justify-between text-xs font-semibold text-gray-700 mb-1">
+                <span>Completion Progress</span>
+                <span>{site.progress}%</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                <div
-                  className="bg-amber-500 h-2.5 rounded-full transition-all duration-500"
-                  style={{ width: `${site.progress}%` }}
-                ></div>
+              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div className="bg-amber-500 h-full transition-all duration-300" style={{ width: `${site.progress}%` }}></div>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-center items-center p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Register New Site</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 font-bold">✕</button>
+            </div>
+            <form onSubmit={handleAddSite} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Site Name</label>
+                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Upper Hill Tower" className="w-full px-3 py-2 border rounded-lg text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Location</label>
+                <input type="text" required value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Upper Hill, Nairobi" className="w-full px-3 py-2 border rounded-lg text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Assigned Foreman</label>
+                <input type="text" required value={foreman} onChange={(e) => setForeman(e.target.value)} placeholder="Foreman Full Name" className="w-full px-3 py-2 border rounded-lg text-sm" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Initial Worker Roster</label>
+                <input type="number" min="1" value={workers} onChange={(e) => setWorkers(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2 text-sm text-gray-600 bg-gray-100 rounded-lg">Cancel</button>
+                <button type="submit" className="flex-1 py-2 text-sm font-bold bg-amber-500 hover:bg-amber-400 rounded-lg">Create Site</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -20,26 +20,39 @@ import mpesaRoutes from "./routes/mpesa.routes.js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// Configure CORS for Frontend Integration
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected Successfully"))
-  .catch(err => console.error("MongoDB Connection Error:", err));
+  .catch((err) => console.error("MongoDB Connection Error:", err));
 
 app.get("/", (req, res) => {
   res.send("Backend is running...");
 });
 
+// Session Middleware
 app.use(
   session({
-    secret: "scribble-secret",
+    secret: process.env.SESSION_SECRET || "scribble-secret",
     resave: false,
     saveUninitialized: true,
   })
 );
 
+// Passport Authentication Middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
