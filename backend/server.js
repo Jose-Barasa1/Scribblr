@@ -56,17 +56,17 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Mount All API Routes
+// Mount All API Routes cleanly under /api
 app.use("/api/auth", authRoutes);
-app.use("/api/sites", siteRoutes);
-app.use("/api/equipment", equipmentRoutes);
-app.use("/api/handouts", handoutRoutes);
-app.use("/api/vault", vaultRoutes);
-app.use("/api/workforce", workforceRoutes);
-app.use("/api/reports", reportsRoutes);
-app.use("/api/materials", materialsRoutes);
-app.use("/api/pettycash", pettycashRoutes);
-app.use("/api/mpesa", mpesaRoutes);
+app.use("/api", siteRoutes);
+app.use("/api", equipmentRoutes);
+app.use("/api", handoutRoutes);
+app.use("/api", vaultRoutes);
+app.use("/api", workforceRoutes);
+app.use("/api", reportsRoutes);
+app.use("/api", materialsRoutes);
+app.use("/api", pettycashRoutes);
+app.use("/api", mpesaRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

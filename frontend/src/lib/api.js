@@ -24,6 +24,11 @@ export const api = {
     if (!res.ok) throw new Error('Failed to create worker entry');
     return res.json();
   },
+  deleteWorker: async (id) => {
+    const res = await fetch(`${API_BASE}/workforce/${id}`, { method: 'DELETE', headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to delete worker entry');
+    return res.json();
+  },
 
   // Sites
   getSites: async () => {
@@ -38,6 +43,11 @@ export const api = {
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error('Failed to create site entry');
+    return res.json();
+  },
+  deleteSite: async (id) => {
+    const res = await fetch(`${API_BASE}/sites/${id}`, { method: 'DELETE', headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to delete site entry');
     return res.json();
   },
 
@@ -56,6 +66,11 @@ export const api = {
     if (!res.ok) throw new Error('Failed to submit requisition request');
     return res.json();
   },
+  deleteRequisition: async (id) => {
+    const res = await fetch(`${API_BASE}/pettycash/${id}`, { method: 'DELETE', headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to delete requisition record');
+    return res.json();
+  },
 
   // Equipment
   getEquipment: async () => {
@@ -72,6 +87,11 @@ export const api = {
     if (!res.ok) throw new Error('Failed to add equipment asset');
     return res.json();
   },
+  deleteEquipment: async (id) => {
+    const res = await fetch(`${API_BASE}/equipment/${id}`, { method: 'DELETE', headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to delete equipment asset');
+    return res.json();
+  },
 
   // Reports
   getReports: async () => {
@@ -79,13 +99,9 @@ export const api = {
     if (!res.ok) throw new Error('Failed to fetch site reports');
     return res.json();
   },
-  updateReportStatus: async (id, status) => {
-    const res = await fetch(`${API_BASE}/reports/${id}`, {
-      method: 'PATCH',
-      headers: getHeaders(),
-      body: JSON.stringify({ status }),
-    });
-    if (!res.ok) throw new Error('Failed to update status');
+  deleteReport: async (id) => {
+    const res = await fetch(`${API_BASE}/reports/${id}`, { method: 'DELETE', headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to delete report log');
     return res.json();
   }
 };

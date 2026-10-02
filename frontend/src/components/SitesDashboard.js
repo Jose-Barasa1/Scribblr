@@ -18,13 +18,8 @@ export default function SitesDashboard() {
     try {
       setLoading(true);
       const data = await api.getSites();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setSites(data);
-      } else {
-        setSites([
-          { _id: '1', siteId: 'S-101', name: 'CBD Tower A', location: 'Nairobi Central', progress: 65, budget: 'KES 4,500,000', status: 'Active' },
-          { _id: '2', siteId: 'S-102', name: 'Westlands Complex', location: 'Westlands', progress: 40, budget: 'KES 8,200,000', status: 'Active' },
-        ]);
       }
     } catch (err) {
       console.error(err);
@@ -51,9 +46,9 @@ export default function SitesDashboard() {
 
     try {
       const savedSite = await api.createSite(payload);
-      setSites([savedSite, ...sites]);
+      setSites((prev) => [savedSite, ...prev]);
     } catch (err) {
-      setSites([payload, ...sites]);
+      console.error('Failed to persist site to DB:', err);
     } finally {
       setName('');
       setLocation('');
@@ -63,14 +58,26 @@ export default function SitesDashboard() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-500 font-semibold">Loading sites...</div>;
+  const handleDeleteSite = async (id) => {
+    if (!confirm('Are you sure you want to delete this site record?')) return;
+    try {
+      await api.deleteSite(id);
+      setSites((prev) => prev.filter((s) => (s._id || s.siteId) !== id));
+    } catch (err) {
+      console.error('Failed to delete site:', err);
+      // Fallback UI deletion
+      setSites((prev) => prev.filter((s) => (s._id || s.siteId) !== id));
+    }
+  };
+
+  if (loading) return <div className="p-8 text-center text-gray-500 font-semibold">Loading sites from database...</div>;
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Active Construction Sites</h2>
-          <p className="text-sm text-gray-500 mt-0.5">Track site progress and resource allocations.</p>
+          <p className="text-sm text-gray-500 mt-0.5">Track site progress and manage active deployments.</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -81,35 +88,50 @@ export default function SitesDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sites.map((site) => (
-          <div key={site._id || site.siteId} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <span className="text-xs font-mono font-bold text-amber-600">{site.siteId}</span>
-                <h3 className="text-lg font-bold text-gray-900">{site.name}</h3>
-                <p className="text-xs text-gray-500">{site.location}</p>
-              </div>
-              <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                {site.status}
-              </span>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="text-gray-500">Progress</span>
-                <span className="text-gray-900">{site.progress}%</span>
-              </div>
-              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                <div className="bg-amber-500 h-full rounded-full" style={{ width: `${site.progress}%` }}></div>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-gray-100 flex justify-between items-center text-xs">
-              <span className="text-gray-500 font-medium">Budget</span>
-              <span className="font-bold text-gray-900">{site.budget}</span>
-            </div>
+        {sites.length === 0 ? (
+          <div className="col-span-full bg-white border border-dashed border-gray-300 rounded-xl p-8 text-center text-gray-500">
+            No sites found in database. Click <strong>+ Add New Site</strong> to create one.
           </div>
-        ))}
+        ) : (
+          sites.map((site) => (
+            <div key={site._id || site.siteId} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4 relative">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-xs font-mono font-bold text-amber-600">{site.siteId}</span>
+                  <h3 className="text-lg font-bold text-gray-900">{site.name}</h3>
+                  <p className="text-xs text-gray-500">{site.location}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    {site.status || 'Active'}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteSite(site._id || site.siteId)}
+                    className="text-xs font-bold text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                    title="Delete Site"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-bold mb-1">
+                  <span className="text-gray-500">Progress</span>
+                  <span className="text-gray-900">{site.progress || 0}%</span>
+                </div>
+                <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                  <div className="bg-amber-500 h-full rounded-full" style={{ width: `${site.progress || 0}%` }}></div>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-gray-100 flex justify-between items-center text-xs">
+                <span className="text-gray-500 font-medium">Budget</span>
+                <span className="font-bold text-gray-900">{site.budget}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {isModalOpen && (
