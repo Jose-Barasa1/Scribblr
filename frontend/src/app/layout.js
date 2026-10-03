@@ -6,5 +6,5 @@ const barlow = Barlow({weight:["400","600"], subsets: ["latin"], variable:"--fon
 
 export const metadata ={
   title:"Scribblr",
-  description:"Created by the guys"
+  description:"Created by the guys five guys"
 }
