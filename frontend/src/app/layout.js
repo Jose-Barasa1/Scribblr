@@ -1,15 +1,10 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bebas_Neue, Barlow } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const bebas = Bebas_Neue({  weight: "400", subsets:"Latin", variable:"--font-head"});
+const barlow = Barlow({ weight: ["400", "600"], subsets:"Latin", variable:"--font-body"});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+
 
 export const metadata = {
   title: "Scribble",
