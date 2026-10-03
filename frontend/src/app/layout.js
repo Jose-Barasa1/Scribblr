@@ -11,11 +11,12 @@ export const metadata = {
   description: "Construction company automation portfolio",
 };
 
+export const viewport = { width: "device-width", initialScale: 1, viewportFit:"cover" };
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${bebas.variable} ${barlow.variable} `}
       >
         {children}
       </body>
