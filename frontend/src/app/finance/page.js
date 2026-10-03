@@ -1,0 +1,13 @@
+import Navbar from '@/components/Navbar';
+import FinanceDashboard from '@/components/FinanceDashboard';
+
+export default function FinancePage() {
+  return (
+    <main className="min-h-screen bg-white text-gray-900 font-sans pb-20">
+      <Navbar />
+      <div className="pt-6">
+        <FinanceDashboard />
+      </div>
+    </main>
+  );
+}
