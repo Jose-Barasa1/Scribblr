@@ -19,3 +19,26 @@ const jobs = [
   {name:"Syokimau Warehouse", pct:31},
   {name:"Ngong Stadium", pct:90},
 ];
+
+const features =[
+  {
+    n:"01",
+    title:"Daily Site Diary",
+    text:"foremen post photos and progress every day",
+    caption:"Posted 4:12pm ' Foreman Otis ' Kilimani",
+    href:"/reports",
+    panel:"bg-gray-900 text-white",
+    visual: (
+      <div className="flex gap-2.5">
+        <i className="h-24 flex-1 rounded-x1 bg-linear-to-br from-slate-500 to-slate-800"/>
+        <i className="h-24 flex-1 rounded-x1 bg-linear-to-br from-amber-600 to-amber-900"/>
+        <i className="h-24 flex-1 rounded-x1 bg-linear-to-br from-sky-600 to-slate-800" />
+      </div>
+    )
+
+  },
+
+  {
+    
+  }
+]
