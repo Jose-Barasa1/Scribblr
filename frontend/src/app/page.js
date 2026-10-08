@@ -39,6 +39,29 @@ const features =[
   },
 
   {
-    
+    n:"02",
+    title:"Material & Cost",
+    text:"Track cement,steel and sand against your budget and get warned before your stock runs out",
+    caption:"Budget used KES 2.1M of 3.8M",
+    href:"/finance",
+    panel:"bg-amber-400 text-gray-900",
+    visual:(
+      <div className="grid gap-3 text-sm font-semibold">
+        {[["Cement(bags)", 20], ["Steel", 47], ["Sand(bags)", 85]].map(([name,p])=> (  
+          <div key={name} className="grid grid-cols-[70px_1fr_40px] items-center gap-2.5">
+            {name}
+            <b className="h-2.5 overflow-hidden rounded-full bg-black/15 ">
+            <i className="block h-full rounded-full bg-gray-900" style={{width:`${p}%`}}/>
+            </b>
+            {p}%
+          </div>
+        )) }
+      </div>
+    ),
+  },
+
+  {
+    n:"03",
+    title:""
   }
 ]
