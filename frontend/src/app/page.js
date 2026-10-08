@@ -62,6 +62,21 @@ const features =[
 
   {
     n:"03",
-    title:""
-  }
-]
+    title:"Fundi & Tasks",
+    text:"Assign work,mark attendance and keep every member on board with the plan",
+    caption:"Today's crew ' Syokimau",
+    href:"/workforce",
+    panel:"bg-stone-200 text-gray-900",
+    visual:(
+      <div className="grid gap-2.5 text-sm font-semibold">
+        {[["Otis", True], ["Monica", False], ["Musa", True]].map (([name, ok]) =>(
+      <div key={name} className="flex justify-between rounded-x1 bg-white px-4 py-3">
+        {name}
+        <span className={ok ? "text-green-600" : "text-red-600"} >{ok? "Present": "Absent"}</span>
+      </div>
+        
+        ))}
+      </div>
+    ),
+  },
+];
