@@ -110,3 +110,34 @@ function Reveal({ children, delay = 0, className = "" }) {
     </div>
   );
 }
+
+function CountUp({ to, suffix = "" }) {
+  const [ref, seen] = useInView();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!seen) return;
+    let raf, t0;
+    const step = (t) => {
+      t0 = t0 ?? t;
+      const p = Math.min((t - t0) / 1400, 1);
+      setN(Math.round(to * p));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [seen, to]);
+  return <span ref={ref}>{n}{suffix}</span>;
+}
+ 
+
+function Bar({ pct }) {
+  const [ref, seen] = useInView();
+  return (
+    <div ref={ref} className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200">
+      <div
+        className="h-full rounded-full bg-amber-400 transition-[width] duration-[1600ms] ease-out"
+        style={{ width: seen ? `${pct}%` : "0%" }}
+      />
+    </div>
+  );
+}
