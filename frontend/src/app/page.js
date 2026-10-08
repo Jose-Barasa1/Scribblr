@@ -69,7 +69,7 @@ const features =[
     panel:"bg-stone-200 text-gray-900",
     visual:(
       <div className="grid gap-2.5 text-sm font-semibold">
-        {[["Otis", True], ["Monica", False], ["Musa", True]].map (([name, ok]) =>(
+        {[["Otis", true], ["Monica", false], ["Musa", true]].map (([name, ok]) =>(
       <div key={name} className="flex justify-between rounded-x1 bg-white px-4 py-3">
         {name}
         <span className={ok ? "text-green-600" : "text-red-600"} >{ok? "Present": "Absent"}</span>
@@ -80,3 +80,33 @@ const features =[
     ),
   },
 ];
+
+function useInView(threshold = 0.25){
+  const ref = useRef(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(()=>{
+    const el= ref.current;
+    if(!el) return;
+    const io = new IntersectionObserver(([e])=>{
+      if (e.isIntersecting) {setSeen(true); io.disconnect();}
+  },{threshold});
+  io.observe(el);
+  return()=>io.disconnect();
+  }, {threshold} );
+  return [ref,seen];
+}
+
+function Reveal({ children, delay = 0, className = "" }) {
+  const [ref, seen] = useInView();
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-700 ease-out motion-reduce:transition-none ${
+        seen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0 motion-reduce:translate-y-0 motion-reduce:opacity-100"
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
