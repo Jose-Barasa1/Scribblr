@@ -2,10 +2,10 @@
 
 import { useEffect,useRef,useState } from "react";
 import Link from"next/link";
-import Bebas_Neue from "next/font/google";
+import {Bebas_Neue} from "next/font/google";
 import Navbar from "@/components/Navbar";
 
-const bebas = Bebas_Neue ({weight:"400", subsets:"Latin"});
+const bebas = Bebas_Neue ({weight:"400", subsets:["Latin"]});
 
 const stats = [
   {label:"Total Workers On Site", value:"142", change: "+12 today", border:"border-amber-500", link:"/workforce"},
@@ -80,20 +80,29 @@ const features =[
     ),
   },
 ];
-
-function useInView(threshold = 0.25){
+function useInView(threshold = 0.25) {
   const ref = useRef(null);
   const [seen, setSeen] = useState(false);
-  useEffect(()=>{
-    const el= ref.current;
-    if(!el) return;
-    const io = new IntersectionObserver(([e])=>{
-      if (e.isIntersecting) {setSeen(true); io.disconnect();}
-  },{threshold});
-  io.observe(el);
-  return()=>io.disconnect();
-  }, {threshold} );
-  return [ref,seen];
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setSeen(true);
+          io.disconnect();
+        }
+      },
+      { threshold }          
+    );
+
+    io.observe(el);
+    return () => io.disconnect();
+  }, [threshold]);           
+
+  return [ref, seen];
 }
 
 function Reveal({ children, delay = 0, className = "" }) {
